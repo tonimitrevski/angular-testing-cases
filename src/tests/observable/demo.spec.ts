@@ -1,5 +1,5 @@
 import {ValueService} from '../demo';
-import {of} from 'rxjs';
+import {defer, of} from 'rxjs';
 
 describe('demo (no TestBed): Observable', () => {
   let service: ValueService;
@@ -19,5 +19,15 @@ describe('demo (no TestBed): Observable', () => {
         expect(value).toBe('mocked value');
         done();
       });
+    });
+
+  it('#getObservableValue should return error from observable mocked failed',
+    () => {
+      spyOn(service, 'getObservableValue').and.returnValue(
+        defer(() => Promise.reject('test error'))
+      );
+      service.getObservableValue().subscribe(
+        value => fail('expected an error, not value'),
+        error  => expect(error).toContain('test error'));
     });
 });
